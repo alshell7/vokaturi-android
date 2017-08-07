@@ -12,12 +12,10 @@ import static com.projects.alshell.vokaturi.Vokaturi.logD;
 import static com.projects.alshell.vokaturi.Vokaturi.logE;
 
 /**
- * Created by Alshell7 @(Ashraf Khan Workstation)
- * 03:44 PM.
- * 05/Aug/2017
+ * Used to record audio in WAV format from the audio input hardware of the platform.
  */
 
-class WavAudioRecorder
+public class WavAudioRecorder
 {
     private final static int[] sampleRates = {44100, 22050, 11025, 8000};
 
@@ -52,13 +50,31 @@ class WavAudioRecorder
     }
 
     /**
-     * INITIALIZING : recorder is initializing;
-     * READY : recorder has been initialized, recorder not yet started
-     * RECORDING : recording
-     * ERROR : reconstruction needed
-     * STOPPED: reset needed
+     * Recorder state
      */
-    public enum State {INITIALIZING, READY, RECORDING, ERROR, STOPPED};
+    public enum State
+    {
+        /**
+         * Recorder is initializing
+         */
+        INITIALIZING,
+        /**
+         * Recorder has been initialized, recorder not yet started
+         */
+        READY,
+        /**
+         * Recording
+         */
+        RECORDING,
+        /**
+         * Reconstruction needed
+         */
+        ERROR,
+        /**
+         * Reset needed
+         */
+        STOPPED
+    };
 
     public static final boolean RECORDING_UNCOMPRESSED = true;
     public static final boolean RECORDING_COMPRESSED = false;
@@ -82,7 +98,6 @@ class WavAudioRecorder
     // Output file path
     private String filePath = null;
 
-    // Recorder state; see State
     private State state;
 
     // File writer (only in uncompressed mode)
@@ -118,11 +133,9 @@ class WavAudioRecorder
         return state;
     }
 
-    /*
-    *
-    * Method used for recording.
-    *
-    */
+    /**
+     * Method used for recording.
+     */
     private AudioRecord.OnRecordPositionUpdateListener updateListener = new AudioRecord.OnRecordPositionUpdateListener()
     {
         public void onPeriodicNotification(AudioRecord recorder)
@@ -166,6 +179,7 @@ class WavAudioRecorder
             // NOT USED
         }
     };
+
     /**
      *
      *
@@ -238,7 +252,7 @@ class WavAudioRecorder
             }
             else
             {
-                logE("Unknown error occured while initializing recording");
+                logE("Unknown error occurred while initializing recording");
             }
             state = State.ERROR;
         }
@@ -271,7 +285,7 @@ class WavAudioRecorder
             }
             else
             {
-                logE("Unknown error occured while setting output path");
+                logE("Unknown error occurred while setting output path");
             }
             state = State.ERROR;
         }
@@ -379,7 +393,7 @@ class WavAudioRecorder
             }
             else
             {
-                logE("Unknown error occured in prepare()");
+                logE("Unknown error occurred in prepare()");
             }
             state = State.ERROR;
         }
@@ -391,6 +405,7 @@ class WavAudioRecorder
      *  Releases the resources associated with this class, and removes the unnecessary files, when necessary
      *
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void release()
     {
         if (state == State.RECORDING)
@@ -407,7 +422,7 @@ class WavAudioRecorder
                 }
                 catch (IOException e)
                 {
-                    logE("I/O exception occured while closing output file");
+                    logE("I/O exception occurred while closing output file");
                 }
                 (new File(filePath)).delete();
             }
@@ -525,7 +540,7 @@ class WavAudioRecorder
                 }
                 catch(IOException e)
                 {
-                    logE("I/O exception occured while closing output file");
+                    logE("I/O exception occurred while closing output file");
                     state = State.ERROR;
                 }
             }

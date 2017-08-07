@@ -65,12 +65,6 @@ inline static int Sound_saveAsWavFile (Sound *me, const char *fileName) {
     return 0;
 }
 
-inline static void test_Sound_saveAsWavFile () {
-    Sound sound;
-    Sound_initAsSweep (& sound, 10.0, 44100.0, 22000.0);
-    Sound_saveAsWavFile (& sound, "/Users/pboersma/Desktop/kanweg.wav");
-}
-
 
 #ifdef __cplusplus
 }

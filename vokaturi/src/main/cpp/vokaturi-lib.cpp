@@ -5,167 +5,95 @@
 #include "VokaturiException.h"
 
 #define  DEBUG_LOG_TAG  "VokaturiLib"
-
-#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, DEBUG_LOG_TAG, __VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, DEBUG_LOG_TAG, __VA_ARGS__)
 
-VokaturiEmotionProbabilities perform(JNIEnv *env, const char *fileName);
-
-/*
-JavaVM* gJvm = nullptr;
-static jobject gClassLoader;
-static jmethodID gFindClassMethod;
-
-*/
-
-/*
-JNIEnv* getEnv() {
-    JNIEnv *env;
-    LOGD(">> Fetching the *env");
-    int status = gJvm->GetEnv((void**)&env, JNI_VERSION_1_6);
-    if(status < 0) {
-        status = gJvm->AttachCurrentThread(&env, NULL);
-        if(status < 0) {
-            return nullptr;
-        }
-    }
-    LOGD(">> Returning the jni *env");
-    return env;
-}
-
-jclass findClass(const char* name) {
-    LOGD(">> Finding class");
-    return static_cast<jclass>(getEnv()->CallObjectMethod(gClassLoader, gFindClassMethod, getEnv()->NewStringUTF(name)));
-}
-
-extern "C"
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved) {
-
-    LOGD(">> Vokaturi Loading..");
-    gJvm = pjvm;
-
-    auto env = getEnv();
-    //replace with one of your classes in the line below
-    auto randomClass = env->FindClass("com/projects/alshell/vokaturi/Vokaturi");
-    jclass classClass = env->GetObjectClass(randomClass);
-    auto classLoaderClass = env->FindClass("java/lang/ClassLoader");
-    auto getClassLoaderMethod = env->GetMethodID(classClass, "getClassLoader",
-                                                 "()Ljava/lang/ClassLoader;");
-    gClassLoader = env->CallObjectMethod(randomClass, getClassLoaderMethod);
-    gFindClassMethod = env->GetMethodID(classLoaderClass, "findClass",
-                                        "(Ljava/lang/String;)Ljava/lang/Class;");
-
-    return JNI_VERSION_1_6;
-}
-*/
+VokaturiEmotionProbabilities processFile(JNIEnv *env, const char *fileName);
 
 void logD(JNIEnv *env, const char * msg, ...)
 {
-    jclass cls = env->FindClass("com/projects/alshell/vokaturi/Vokaturi");
-    jfieldID fieldIsDebugEnabled = env->->GetFieldID(cls, "DEBUG_LOGGING_ENABLED", "Z");
-    jboolean isDebugEnabled = env->->GetStaticBooleanField(cls, fieldIsDebugEnabled);
-    if(isDebugEnabled == JNI_TRUE)
-    {
-        va_list ap;
-        va_start(ap, fmt);
-        __android_log_vprint(ANDROID_LOG_DEBUG, DEBUG_LOG_TAG, msg, ap);
-        va_end(ap);
+    if (env->ExceptionCheck() == JNI_FALSE) {
+        jclass cls = env->FindClass("com/projects/alshell/vokaturi/Vokaturi");
+        jfieldID fieldIsDebugEnabled = env->GetStaticFieldID(cls, "DEBUG_LOGGING_ENABLED", "Z");
+        jboolean isDebugEnabled = env->GetStaticBooleanField(cls, fieldIsDebugEnabled);
+        if(isDebugEnabled == JNI_TRUE)
+        {
+            va_list ap;
+            va_start(ap, msg);
+            __android_log_vprint(ANDROID_LOG_DEBUG, DEBUG_LOG_TAG, msg, ap);
+            va_end(ap);
+        }
     }
 }
 
 void logE(JNIEnv *env, const char *msg, ...)
 {
-    jclass cls = env->FindClass("com/projects/alshell/vokaturi/Vokaturi");
-    jfieldID fieldIsDebugEnabled = env->->GetFieldID(cls, "DEBUG_LOGGING_ENABLED", "Z");
-    jboolean isDebugEnabled = env->->GetStaticBooleanField(cls, fieldIsDebugEnabled);
-    if(isDebugEnabled == JNI_TRUE)
-    {
-        va_list ap;
-        va_start(ap, fmt);
-        __android_log_vprint(ANDROID_LOG_ERROR, DEBUG_LOG_TAG, msg, ap);
-        va_end(ap);
+    if (env->ExceptionCheck() == JNI_FALSE) {
+        jclass cls = env->FindClass("com/projects/alshell/vokaturi/Vokaturi");
+        jfieldID fieldIsDebugEnabled = env->GetStaticFieldID(cls, "DEBUG_LOGGING_ENABLED", "Z");
+        jboolean isDebugEnabled = env->GetStaticBooleanField(cls, fieldIsDebugEnabled);
+        if(isDebugEnabled == JNI_TRUE)
+        {
+            va_list ap;
+            va_start(ap, msg);
+            __android_log_vprint(ANDROID_LOG_ERROR, DEBUG_LOG_TAG, msg, ap);
+            va_end(ap);
+        }
     }
 }
 
+VokaturiEmotionProbabilities processFile(JNIEnv *env, const char *fileName){
 
-VokaturiEmotionProbabilities perform(JNIEnv *env, const char *fileName){
-
-    LOGD(">>Vokaturi, Emotion analysis about to begin on the file");
-    //LOGD(fileName);
+    logD(env, ">>@Vokaturi, Emotion analysis about to begin on the file");
 
     VokaturiWavFile wavFile;
+
     VokaturiWavFile_open (fileName, & wavFile);
-    LOGD(">>@Vokaturi, File Open Successful");
+    logD(env, ">>@Vokaturi, File Open Successful");
+
     if (! VokaturiWavFile_valid (& wavFile)) {
-        LOGE(">> Exception encountered. Invalid WAV file");
+        logE(env, ">>@Vokaturi, Exception encountered. Invalid WAV file");
         VokaturiEmotionProbabilities emotionsNULL = VokaturiEmotionProbabilities();
-        ThrowVokaturiException(-1, "Could not analyze WAV file. It seems the given file is not of a valid WAV format\n");
+        //com.projects.alshell.vokaturi.VokaturiException.VOKATURI_INVALID_WAV_FILE = 4;
+        ThrowVokaturiException(4, "Could not analyze WAV file. It seems the given file is not of a valid WAV format\n");
         return emotionsNULL;
     }
 
-    //env->ExceptionClear();
+    logD(env, ">>@Vokaturi, Getting sample rate and buffer length of the WAV file");
+    VokaturiVoice voice = VokaturiVoice_create (wavFile.samplingFrequency, wavFile.numberOfSamples);
 
-    LOGD(">>@Vokaturi, Getting sample rate and buffer length of the WAV file");
-    VokaturiVoice voice = VokaturiVoice_create (
-            wavFile.samplingFrequency,
-            wavFile.numberOfSamples
-    );
+    logD(env, ">>@Vokaturi, Reading file to cache and filling voice on given samples");
 
-    LOGD(">>@Vokaturi, Reading file to cache and filling voice on given samples");
-
-    VokaturiWavFile_fillVoice (& wavFile, voice,
-                               0,   // the only or left channel
-                               0,   // starting from the first sample
-                               wavFile.numberOfSamples   // all samples
-    );
+    VokaturiWavFile_fillVoice (& wavFile, voice, 0, 0, wavFile.numberOfSamples);
 
     VokaturiQuality quality;
     VokaturiEmotionProbabilities emotionProbabilities;
 
-    LOGD(">>@Vokaturi, Extracting emotions now");
+    logD(env, ">>@Vokaturi, Extracting emotions now");
     VokaturiVoice_extract (voice, & quality, & emotionProbabilities);
 
-    //char s[50];
-
     if (quality.valid) {
-        LOGD (">>@Vokaturi, Neutrality : %f", emotionProbabilities.neutrality);
+        logD(env, ">>@Vokaturi, Neutrality : %f", emotionProbabilities.neutrality);
 
-        //sprintf(s,"%f", emotionProbabilities.neutrality);
-        //LOGD(s);
+        logD(env, ">>@Vokaturi, Happiness : %f", emotionProbabilities.happiness);
 
-        LOGD (">>@Vokaturi, Happiness : %f", emotionProbabilities.happiness);
-        //sprintf(s,"%f", emotionProbabilities.happiness);
-        //LOGD(s);
+        logD(env, ">>@Vokaturi, Sadness : %f", emotionProbabilities.sadness);
 
-        LOGD (">>@Vokaturi, Sadness : %f", emotionProbabilities.sadness);
-        //sprintf(s,"%f", emotionProbabilities.sadness);
-        //LOGD(s);
+        logD(env, ">>@Vokaturi, Anger : %f", emotionProbabilities.anger);
 
-        LOGD (">>@Vokaturi, Anger : %f", emotionProbabilities.anger);
-        //sprintf(s,"%f", emotionProbabilities.anger);
-        //LOGD(s);
-
-
-        LOGD (">>@Vokaturi, Fear : %f", emotionProbabilities.fear);
-        //sprintf(s,"%f", emotionProbabilities.fear);
-        //LOGD(s);
+        logD(env, ">>@Vokaturi, Fear : %f", emotionProbabilities.fear);
 
     } else {
-        LOGE(">>@Vokaturi, Not enough sonorancy to determine emotions\n");
-        /*emotionProbabilities.happiness = 0.0;
-        emotionProbabilities.neutrality = 0.0;
-        emotionProbabilities.fear = 0.0;
-        emotionProbabilities.anger = 0.0;
-        emotionProbabilities.sadness = 0.0;*/
+        logE(env, ">>@Vokaturi, Not enough sonorancy to determine emotions\n");
+
         //com.projects.alshell.vokaturi.VokaturiException.VOKATURI_NOT_ENOUGH_SONORANCY = 2
         ThrowVokaturiException(2, "Not enough sonorancy to determine emotions\n");
     }
 
-    LOGD(">>@Vokaturi Finishing analyze process");
+    logD(env, ">>@Vokaturi, Finishing analyze process");
     VokaturiVoice_destroy (voice);
     VokaturiWavFile_clear (& wavFile);
 
-    LOGD(">>@Vokaturi Returning the results to JNI");
+    logD(env, ">>@Vokaturi, Returning the results to JNI");
     return emotionProbabilities;
 }
 
@@ -175,58 +103,55 @@ Java_com_projects_alshell_vokaturi_Vokaturi_analyzeWav(JNIEnv *env, jobject inst
                                                        jstring fileName_){
     const char *fileName = env->GetStringUTFChars(fileName_, 0);
 
-    VokaturiEmotionProbabilities probabilities = perform(env, fileName);
+    VokaturiEmotionProbabilities probabilities = processFile(env, fileName);
+
+    logD(env, ">>@JNI, Results received from Vokaturi");
 
     if(env->ExceptionCheck())
     {
-        LOGE(">>@JNI, There are few pending exceptions to take over");
+        LOGE(">>There are few pending exceptions to take over");
         jthrowable exception = env->ExceptionOccurred();
         env->ExceptionClear();
         env->Throw(exception);
         return nullptr;
     } else {
-        LOGD(">>@JNI, Instantiating EmotionProbabilities class in JNI");
-        //jclass cls = env->FindClass("com/projects/alshell/vokaturi/EmotionProbabilities");
+        logD(env, ">>@JNI, Instantiating EmotionProbabilities class in JNI");
+
         jclass cls = env->FindClass("com/projects/alshell/vokaturi/EmotionProbabilities");
-        //(Lhelloworld$ExportedFuncs;)V for inner classes
         jmethodID methodId = env->GetMethodID(cls, "<init>", "()V");
 
-        LOGD(">>@JNI, Creating instance of the class");
+        logD(env, ">>@JNI, Creating instance of the class");
         jobject obj = env->NewObject(cls, methodId);
         jclass emotionProbabilitiesClass = env->GetObjectClass(obj);
 
-        LOGD(">>@JNI, Setting fields of EmotionProbabilities");
+        logD(env, ">>@JNI, Setting fields of EmotionProbabilities");
         jfieldID fieldIdNeutrality = env->GetFieldID(emotionProbabilitiesClass, "Neutrality", "D");
         jdouble jValueNeutrality = (jdouble) probabilities.neutrality;
         env->SetDoubleField(obj, fieldIdNeutrality, jValueNeutrality);
-        LOGD (">>@JNI, Neutrality : %f", jValueNeutrality);
+
 
         jfieldID fieldIdHappiness = env->GetFieldID(emotionProbabilitiesClass, "Happiness", "D");
         jdouble jValueHappiness = (jdouble) probabilities.happiness;
         env->SetDoubleField(obj, fieldIdHappiness, jValueHappiness);
-        LOGD (">>@JNI, Happiness : %f", jValueHappiness);
+
 
         jfieldID fieldIdSadness = env->GetFieldID(emotionProbabilitiesClass, "Sadness", "D");
         jdouble jValueSadness = (jdouble) probabilities.sadness;
         env->SetDoubleField(obj, fieldIdSadness, jValueSadness);
-        LOGD (">>@JNI, Sadness : %f", jValueSadness);
+
 
         jfieldID fieldIdAnger = env->GetFieldID(emotionProbabilitiesClass, "Anger", "D");
         jdouble jValueAnger = (jdouble) probabilities.anger;
         env->SetDoubleField(obj, fieldIdAnger, jValueAnger);
-        LOGD (">>@JNI, Anger : %f", jValueAnger);
+
 
         jfieldID fieldIdFear = env->GetFieldID(emotionProbabilitiesClass, "Fear", "D");
         jdouble jValueFear = (jdouble) probabilities.fear;
         env->SetDoubleField(obj, fieldIdFear, jValueFear);
-        LOGD (">>@JNI, Fear : %f", jValueFear);
 
-        //env->ReleaseStringUTFChars(fileName_, fileName);
+        logD(env, ">>@JNI, All Fields set");
 
-        LOGD(">>@JNI, All Fields set");
-
-        logD(env, "OK %f");
-        LOGD(">>@JNI, Returning the EmotionProbabilities object to Java");
+        logD(env, ">>@JNI, Returning the EmotionProbabilities object to Java");
         return obj;
     }
 

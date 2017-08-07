@@ -4,17 +4,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Alshell7 @(Ashraf Khan Workstation)
- * 03:50 PM.
- * 05/Aug/2017
+ * An exception thrown by the library (from both native or java implementation) indicating any serious problem.
  */
-
 public class VokaturiException extends Exception
 {
-    public static final int VOKATURI_OK = 0;
-    public static final int VOKATURI_NOT_ENOUGH_SONORANCY = 2;
-    public static final int VOKATURI_DENIED_PERMISSIONS = 3;
+
+    /**
+     * Generic error.
+     */
     public static final int VOKATURI_ERROR = -1;
+
+    /**
+     * Not enough sonorancy to determine emotions.
+     * <p>
+     *    If the speech sound that is produced is not continuous, and has turbulent audio.
+     * </p>
+     */
+    public static final int VOKATURI_NOT_ENOUGH_SONORANCY = 2;
+
+    /**
+     * File Read Write/Recording Audio permissions not granted for the application.
+     */
+    public static final int VOKATURI_DENIED_PERMISSIONS = 3;
+
+
+    /**
+     * The given file is not of a valid WAV format.
+     */
+    public static final int VOKATURI_INVALID_WAV_FILE = 4;
+
 
     private int myErrorCode = VOKATURI_ERROR;
 
@@ -25,6 +43,11 @@ public class VokaturiException extends Exception
         super(message);
     }
 
+    /**
+     * Constructor with error code and message
+     * @param code Error code
+     * @param message cause of the exception
+     */
     public VokaturiException (int code, String message) {
         super (message + " (" + code + ": " + errorCodes.get (code) + ")");
         this.myErrorCode = code;
@@ -35,12 +58,15 @@ public class VokaturiException extends Exception
     }
 
     static {
-        addErrorCode (VOKATURI_OK, "VOKATURI_OK", "Everything is seems fine.");
-        addErrorCode (VOKATURI_ERROR, "VOKATURI_ERROR", "Generic Error.");
+        addErrorCode (VOKATURI_ERROR, "VOKATURI_ERROR", "Generic error");
         addErrorCode (VOKATURI_NOT_ENOUGH_SONORANCY, "VOKATURI_NOT_ENOUGH_SONORANCY", "Not enough sonorancy to determine emotions");
         addErrorCode (VOKATURI_DENIED_PERMISSIONS, "VOKATURI_DENIED_PERMISSIONS", "File Read Write/Recording Audio permissions not granted");
+        addErrorCode (VOKATURI_INVALID_WAV_FILE, "VOKATURI_INVALID_WAV_FILE", "The given file is not of a valid WAV format");
     }
 
+    /**
+     * This is used by the native code to call the exception and set information
+     */
     public void __jni_setLocation(String functionName, String file, int line) {
         addStackTraceElement (this, functionName, file, line);
     }
@@ -61,6 +87,10 @@ public class VokaturiException extends Exception
         t.setStackTrace (newStack);
     }
 
+    /**
+     * Gets the error code of the exception thrown
+     * @return Error code
+     */
     public int getErrorCode()
     {
         return myErrorCode;

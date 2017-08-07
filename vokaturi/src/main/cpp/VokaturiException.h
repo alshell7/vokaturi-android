@@ -22,8 +22,6 @@ void throwVokaturiException(
 
 
 void  throwVokaturiException(
-        // The first four parameters are common for all
-        // throwables
         JNIEnv *env,
         const char *functionName,
         const char *file,

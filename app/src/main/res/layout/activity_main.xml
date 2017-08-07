@@ -7,31 +7,114 @@
     android:layout_height="match_parent"
     tools:context="com.projects.alshell.vokaturiandroid.MainActivity">
 
-    <Button
-        android:id="@+id/buttonStartRecording"
-        android:layout_centerHorizontal="true"
-        android:onClick="onClick"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start recording"/>
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/buttonStopRecording"
-        android:layout_below="@id/buttonStartRecording"
+        <ImageView
+            android:src="@drawable/emoji_default"
+            android:layout_margin="5dp"
+            android:id="@+id/emojiEmotionImageView"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Emotion metrics"
+            android:layout_marginBottom="15dp"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:text="Neutrality:"
+            android:id="@+id/textViewNeutrality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:max="100"
+            android:id="@+id/progressBarNeutrality"
+            android:indeterminate="false"
+            android:progress="0"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+        <TextView
+            android:text="Happiness:"
+            android:id="@+id/textViewHappiness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:max="100"
+            android:id="@+id/progressBarHappiness"
+            android:indeterminate="false"
+            android:progress="0"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+        <TextView
+            android:text="Sadness:"
+            android:id="@+id/textViewSadness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:max="100"
+            android:id="@+id/progressBarSadness"
+            android:indeterminate="false"
+            android:progress="0"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+        <TextView
+            android:text="Anger:"
+            android:id="@+id/textViewAnger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:max="100"
+            android:id="@+id/progressBarAnger"
+            android:indeterminate="false"
+            android:progress="0"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+        <TextView
+            android:text="Fear:"
+            android:id="@+id/textViewFear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:max="100"
+            android:id="@+id/progressBarFear"
+            android:indeterminate="false"
+            android:progress="0"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+
+        <TextView
+            android:paddingTop="5dp"
+            android:id="@+id/actionStatus"
+            android:textAlignment="center"
+            android:text="Press below button to start listening"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <com.projects.alshell.vokaturiandroid.PlayPauseButton
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:onClick="onClick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop recording"/>
-    <Button
-        android:id="@+id/buttonPlayRecording"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/buttonStopRecording"
-        android:layout_width="wrap_content"
-        android:onClick="onClick"
-        android:layout_height="wrap_content"
-        android:text="Play recording"/>
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:id="@+id/playPauseButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"/>
+
+
 </RelativeLayout>
