@@ -107,7 +107,7 @@ Since the method `stopListeningAndAnalyze()` returns back highly accurate metric
 EmotionProbabilities.scaledValues(int scale);
 ```
 
-> For example, the value `0.0780483331548E-15`, after calling `scaledValues(5)`, value will be `0.07805`
+> For example, the value `0.0780483331548E-15`, after calling `scaledValues(5)`, value will change to `0.07805`
 
 * Detect the exact dominating emotion from the metrics :mag_right: :
 
@@ -151,7 +151,7 @@ vokaturiApi.AnalyzeForEmotionsAsync(MainActivity.this, fileName, new VokaturiAsy
 
 ### :speech_balloon: Error codes
 
-The exception [class]((https://github.com/alshell7/VokaturiAndroid/blob/master/vokaturi/src/main/java/com/projects/alshell/vokaturi/VokaturiException.java)) thrown by the library is common for both the exceptions triggered from the [native](https://github.com/alshell7/VokaturiAndroid/blob/master/vokaturi/src/main/cpp/VokaturiException.h) and java implementation as well. The exception comes along with the *error codes*, So that you can take actions based on the type of the exception.
+The exception [class]((https://github.com/alshell7/VokaturiAndroid/blob/master/vokaturi/src/main/java/com/projects/alshell/vokaturi/VokaturiException.java)) thrown by the library is common for both the exceptions triggered from the [native](https://github.com/alshell7/VokaturiAndroid/blob/master/vokaturi/src/main/cpp/VokaturiException.h) and java implementation as well. The exception comes along with the *error codes*, so that you can take actions based on the type of the exception.
 
 The error codes associated with the exception are as follows :
 
@@ -167,9 +167,9 @@ The error codes associated with the exception are as follows :
 
 * You can use in built [recorder](https://github.com/alshell7/VokaturiAndroid/blob/master/vokaturi/src/main/java/com/projects/alshell/vokaturi/WavAudioRecorder.java) to record audio in WAV format, in case you wish to handle the voice recording by yourself.
 
-* Need some more info?, you [download](https://github.com/alshell7/VokaturiAndroid/blob/master/javadocs.zip) java documentation of the library.
+* Need some more info?, you can [download](https://github.com/alshell7/VokaturiAndroid/blob/master/javadocs.zip) the java documentation for the library.
 
-* Found some problems in the library? feel easy to report it in the [issues](https://github.com/alshell7/VokaturiAndroid/issues).
+* Found some problems in the library?, feel easy to report it in the [issues](https://github.com/alshell7/VokaturiAndroid/issues).
 
 ## How to Contribute?
 
