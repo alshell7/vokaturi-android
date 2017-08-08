@@ -180,7 +180,7 @@ public final class Vokaturi
      * @throws VokaturiException If the application permissions lack to access the file
      * @see VokaturiException#VOKATURI_DENIED_PERMISSIONS
      */
-    public static void AnalyzeForEmotionsAsync(Context context, String fileName, VokaturiAsyncResult callback) throws VokaturiException
+    public void AnalyzeForEmotionsAsync(Context context, String fileName, VokaturiAsyncResult callback) throws VokaturiException
     {
         if(shouldAskForPermissionsForGrants(context))
             throw new VokaturiException(VokaturiException.VOKATURI_DENIED_PERMISSIONS, "File Read Write/Recording Audio permissions not granted");
@@ -221,7 +221,7 @@ public final class Vokaturi
         }
     }
 
-    private static  boolean shouldAskForPermissionsForGrants(Context context)
+    private static boolean shouldAskForPermissionsForGrants(Context context)
     {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             logD("Checking for required permissions");

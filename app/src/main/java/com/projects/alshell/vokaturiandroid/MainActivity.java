@@ -1,7 +1,10 @@
 package com.projects.alshell.vokaturiandroid;
 
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,13 +15,19 @@ import android.widget.Toast;
 import com.projects.alshell.vokaturi.Emotion;
 import com.projects.alshell.vokaturi.EmotionProbabilities;
 import com.projects.alshell.vokaturi.Vokaturi;
+import com.projects.alshell.vokaturi.VokaturiAsyncResult;
 import com.projects.alshell.vokaturi.VokaturiException;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.projects.alshell.vokaturi.Vokaturi.logD;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends AppCompatActivity
 {
+
+    private static final int PERMISSIONS_REQUEST_CODE = 5;
 
     private ImageView emojiEmotionImageView;
     private ProgressBar progressBarNeutrality;
@@ -51,6 +60,8 @@ public class MainActivity extends AppCompatActivity
         } catch (VokaturiException e) {
             e.printStackTrace();
         }
+
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_CODE);
 
         initializeViews();
 
@@ -101,24 +112,33 @@ public class MainActivity extends AppCompatActivity
         if(vokaturiApi != null)
         {
             try {
-                actionStatus.setText("Press again to stop listening and analyze emotions");
-                progressBarNeutrality.setIndeterminate(true);
-                progressBarHappiness.setIndeterminate(true);
-                progressBarSadness.setIndeterminate(true);
-                progressBarAnger.setIndeterminate(true);
-                progressBarFear.setIndeterminate(true);
-                emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_default));
-
+                setListeningUI();
                 vokaturiApi.startListeningForSpeech();
             } catch (VokaturiException e) {
+                setNotListeningUI();
                 if(e.getErrorCode() == VokaturiException.VOKATURI_DENIED_PERMISSIONS)
                 {
                     Toast.makeText(this, "Grant Microphone and Storage permissions in the app settings to proceed", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "There was some problem to start listening audio", Toast.LENGTH_SHORT).show();
                 }
+            } catch (IllegalStateException e)
+            {
+                setNotListeningUI();
+                e.printStackTrace();
             }
         }
+    }
+
+    private void setListeningUI()
+    {
+        actionStatus.setText("Press again to stop listening and analyze emotions");
+        progressBarNeutrality.setIndeterminate(true);
+        progressBarHappiness.setIndeterminate(true);
+        progressBarSadness.setIndeterminate(true);
+        progressBarAnger.setIndeterminate(true);
+        progressBarFear.setIndeterminate(true);
+        emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_default));
     }
 
     @SuppressLint("SetTextI18n")
@@ -126,12 +146,7 @@ public class MainActivity extends AppCompatActivity
     {
         if(vokaturiApi != null)
         {
-            actionStatus.setText("Press below button to start listening");
-            progressBarNeutrality.setIndeterminate(false);
-            progressBarHappiness.setIndeterminate(false);
-            progressBarSadness.setIndeterminate(false);
-            progressBarAnger.setIndeterminate(false);
-            progressBarFear.setIndeterminate(false);
+            setNotListeningUI();
 
             try {
                 showMetrics(vokaturiApi.stopListeningAndAnalyze());
@@ -140,8 +155,21 @@ public class MainActivity extends AppCompatActivity
                 {
                     Toast.makeText(this, "Please speak a more clear and avoid noise around your environment", Toast.LENGTH_LONG).show();
                 }
+            } catch (IllegalStateException e)
+            {
+                e.printStackTrace();
             }
         }
+    }
+
+    private void setNotListeningUI()
+    {
+        actionStatus.setText("Press below button to start listening");
+        progressBarNeutrality.setIndeterminate(false);
+        progressBarHappiness.setIndeterminate(false);
+        progressBarSadness.setIndeterminate(false);
+        progressBarAnger.setIndeterminate(false);
+        progressBarFear.setIndeterminate(false);
     }
 
 
@@ -198,6 +226,22 @@ public class MainActivity extends AppCompatActivity
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_fear));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        if (requestCode == PERMISSIONS_REQUEST_CODE)
+        {
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(this, "Audio recording permissions denied.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
 }
