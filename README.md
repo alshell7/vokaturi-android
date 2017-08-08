@@ -23,7 +23,7 @@ Currently the community version of the Vokaturi is able to detect five different
 
 To have a check on the library, download the [demo apk](https://github.com/alshell7/VokaturiAndroid/blob/master/app-debug.apk)
 
-<p align="left"><img src="https://github.com/alshell7/VokaturiAndroid/blob/master/demo_snapshot.png"></p>
+<p align="left"><img src="https://raw.githubusercontent.com/alshell7/VokaturiAndroid/blob/master/demo_snapshot.png"></p>
 
 > Demo application shows the following emoji's based on the results detected from voice.
 
