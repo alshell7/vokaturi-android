@@ -258,6 +258,52 @@ public final class Vokaturi
     }
 
     /**
+     * Get the dominating emotion from the metrics received from the emotion analysis process
+     * @param emotionProbabilities emotion metrics
+     * @return exact emotion that is supposed to be detected
+     */
+    public static Emotion extractEmotion(EmotionProbabilities emotionProbabilities)
+    {
+        Emotion emotion = Emotion.Neutral;
+        double capturedEmotion = max(emotionProbabilities.Neutrality,
+                emotionProbabilities.Happiness,
+                emotionProbabilities.Sadness,
+                emotionProbabilities.Anger,
+                emotionProbabilities.Fear);
+        if(capturedEmotion == emotionProbabilities.Neutrality)
+        {
+            emotion = Emotion.Neutral;
+        } else if(capturedEmotion == emotionProbabilities.Happiness)
+        {
+            emotion = Emotion.Happy;
+        }
+        else if(capturedEmotion == emotionProbabilities.Sadness)
+        {
+            emotion = Emotion.Sad;
+        }
+        else if(capturedEmotion == emotionProbabilities.Anger)
+        {
+            emotion = Emotion.Angry;
+        }
+        else if(capturedEmotion == emotionProbabilities.Fear)
+        {
+            emotion = Emotion.Feared;
+        }
+
+        return emotion;
+    }
+
+    private static Double max(Double... vals) {
+        Double ret = null;
+        for (Double val : vals) {
+            if (ret == null || (val != null && val > ret)) {
+                ret = val;
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Short description of the version and license of the OpenVokaturi library
      * @return description
      */

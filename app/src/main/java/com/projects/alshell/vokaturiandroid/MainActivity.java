@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.projects.alshell.vokaturi.Emotion;
 import com.projects.alshell.vokaturi.EmotionProbabilities;
 import com.projects.alshell.vokaturi.Vokaturi;
 import com.projects.alshell.vokaturi.VokaturiException;
@@ -177,40 +178,26 @@ public class MainActivity extends AppCompatActivity
 
     private void showEmojiBasedOnMetrics(EmotionProbabilities emotionProbabilities)
     {
-        double capturedEmotion = max(emotionProbabilities.Neutrality,
-                emotionProbabilities.Happiness,
-                emotionProbabilities.Sadness,
-                emotionProbabilities.Anger,
-                emotionProbabilities.Fear);
-
-        if(capturedEmotion == emotionProbabilities.Neutrality)
+        Emotion capturedEmotion = Vokaturi.extractEmotion(emotionProbabilities);
+        if(capturedEmotion == Emotion.Neutral)
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_neutral));
-        } else if(capturedEmotion == emotionProbabilities.Happiness)
+        } else if(capturedEmotion == Emotion.Happy)
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_happiness));
         }
-        else if(capturedEmotion == emotionProbabilities.Sadness)
+        else if(capturedEmotion == Emotion.Sad)
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_sadness));
         }
-        else if(capturedEmotion == emotionProbabilities.Anger)
+        else if(capturedEmotion == Emotion.Angry)
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_anger));
         }
-        else if(capturedEmotion == emotionProbabilities.Fear)
+        else if(capturedEmotion == Emotion.Feared)
         {
             emojiEmotionImageView.setImageDrawable(getResources().getDrawable(R.drawable.emoji_fear));
         }
     }
 
-    private Double max(Double... vals) {
-        Double ret = null;
-        for (Double val : vals) {
-            if (ret == null || (val != null && val > ret)) {
-                ret = val;
-            }
-        }
-        return ret;
-    }
 }
