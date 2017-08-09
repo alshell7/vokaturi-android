@@ -1,9 +1,10 @@
 ## Vokaturi - Android Library
 [![](http://img.shields.io/badge/build-passing-blue.svg)]()
-[![](http://img.shields.io/badge/version-1.03-blue.svg)](https://github.com/alshell7/VokaturiAndroid/releases/tag/1.03)
-[![](http://img.shields.io/badge/Vokaturi-2--1d-red.svg)](http://developers.vokaturi.com/getting-started/overview)
-[![](http://img.shields.io/badge/platform-android-green.svg)](https://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
+[![](https://jitpack.io/v/alshell7/VokaturiAndroid.svg)](https://jitpack.io/#alshell7/VokaturiAndroid)
+[![](http://img.shields.io/badge/Vokaturi-2--1d-red.svg)](http://developers.vokaturi.com/getting-started/overview)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-VokaturiAndroid-lightgrey.svg?style=flat)](https://android-arsenal.com/details/1/6036)
+
 
 Android port of the Vokaturi emotion recognition API.
 
@@ -129,7 +130,7 @@ public enum Emotion
  
 ### Analyze asynchronously
 
-You can use async method to anayze for emotions on a background thread. But only if you wish to handle voice recording by yourself, or want to voluntarily process any audio file to extract emotions.
+You can use async method to analyze for emotions on a background thread. But only if you wish to handle voice recording by yourself, or want to voluntarily process any audio file to extract emotions.
 
 ```java
 vokaturiApi.AnalyzeForEmotionsAsync(MainActivity.this, fileName, new VokaturiAsyncResult()
